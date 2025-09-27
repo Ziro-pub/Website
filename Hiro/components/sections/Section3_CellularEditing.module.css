@@ -1,0 +1,98 @@
+.cellularEditing {
+    min-height: 100vh;
+    background-color: var(--color-black);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5vw;
+    overflow: hidden;
+}
+
+.backgroundText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(80px, 15vw, 250px);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--color-green);
+    -webkit-text-stroke: 1px var(--color-green);
+    mix-blend-mode: screen;
+    opacity: 0.4;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.nodeNetworkCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0,255,136,0.1) 0%, rgba(0,0,0,0) 70%);
+    z-index: 0;
+}
+
+.contentOverlay {
+    position: relative;
+    z-index: 10;
+    width: 90%;
+    max-width: 1200px;
+    padding: 2rem;
+    background: rgba(20, 20, 20, 0.5);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.demoContainer {
+    color: var(--color-white);
+}
+.demoContainer h3 { color: var(--color-green); }
+
+.document {
+    margin-top: 1rem;
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.cell {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    cursor: grab;
+    transition: background-color 0.2s ease;
+}
+.cell:active { cursor: grabbing; }
+.cell:last-child { margin-bottom: 0; }
+.cell.text { background-color: rgba(0, 102, 255, 0.2); border-left: 3px solid var(--color-blue); }
+.cell.code { background-color: rgba(121, 40, 202, 0.2); border-left: 3px solid var(--color-purple); font-family: monospace; white-space: pre-wrap;}
+.cell.graph { background-color: rgba(0, 255, 136, 0.2); border-left: 3px solid var(--color-green); }
+
+.featureDescription {
+    color: #ccc;
+}
+.featureDescription h2 {
+    color: var(--color-white);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+.featureDescription p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .contentOverlay {
+        grid-template-columns: 1fr;
+    }
+}

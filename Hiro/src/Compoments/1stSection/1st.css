@@ -1,0 +1,26 @@
+.centered-paragraph {
+  text-align: center; /* Centers the text within the paragraph */
+  width: 23%; /* Sets the width of the paragraph to 50% of its parent */
+  margin: 0 auto; /* Centers the block-level element itself */
+  color: gray;
+  font-size: xx-large;
+  padding: 30px;
+  width: 16%; /* Ensures text box takes full width of its unit */
+
+}
+
+.sub-Heading {
+    color:gray;
+    font-weight: lighter;
+    font-size: 25px;
+    margin-top: 75px;
+    margin-bottom: 5px;
+}
+
+.paragraph{
+  max-width: 620px; 
+  margin: 20px auto; 
+  font-size: 30px;
+  line-height: 1.25; 
+  padding-bottom: 0px;
+}

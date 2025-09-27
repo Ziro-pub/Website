@@ -1,0 +1,164 @@
+.App {
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  font-family: 'Poppins', sans-serif; /* Add this line */
+}
+
+/* New container for responsive wrapping */
+.responsive-text-boxes-wrapper {
+  display: flex;
+  flex-wrap: wrap; /* This is key: allows items to wrap to the next line */
+  justify-content: center; /* Centers the boxes when there's space */
+  gap: 20px; /* Space between each complete text box unit (heading + box) */
+  width: 100%; /* Take full width of its parent */
+  max-width: 900px; /* Optional: Limit the max width of the entire wrapper */
+  padding: 15px;
+}
+
+.individual-text-box-unit {
+  display: flex;
+  flex-direction: column; /* Stack heading and text box vertically */
+  align-items: center; /* Center content within each unit */
+  flex: 1 1 280px; /* flex-grow, flex-shrink, flex-basis. Allows wrapping and minimum width */
+  min-width: 280px; /* Minimum width before wrapping */
+  max-width: 350px; /* Max width for each box, helps maintain layout on larger screens */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.text-box-heading {
+  /* Specific styling for individual headings */
+  color: cadetblue;
+  font-size: 1.2em;
+  margin-bottom: 10px; /* Space between heading and its text box */
+  text-align: center;
+  width: 100%; /* Ensures heading takes full width of its unit */
+}
+
+.text-box {
+  flex: 1; /* Allows the text box to take available height */
+  padding: 15px; /* Added some padding for better readability */
+  border-radius: 8px; /* Slightly rounded corners */
+  text-align: left; /* Align text to the left within the box */
+  white-space: pre-wrap; /* Respect new lines and wrap text */
+  overflow-y: visible; /* If max-height is set, this will add a scrollbar */
+  max-height: 200px; /* Limit height and add scroll if content overflows */
+  width: 100%; /* Ensures text box takes full width of its unit */
+  box-sizing: border-box;
+  line-height: 1.3; /* Improve readability of multi-line text */
+  font-size: 1rem;
+}
+
+/* --- New styles for the form --- */
+
+.form-container {
+  background-color: white;
+  padding: 60px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px; /* Limit form width */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between form groups */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Space between label and input */
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 50;
+  text-align: left;
+}
+
+.form-group input[type='text'],
+.form-group input[type='email'],
+.form-group input[type='Text'] { /* Keep 'Text' for your Occupation input */
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0; /* Lighter border */
+  border-radius: 8px; /* Rounded input fields */
+  font-size: 1rem;
+  color: #272727;
+  background-color: #f9f9f9; /* Light background for input */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box; /* Ensures padding doesn't add to total width */
+}
+
+.form-group input[type='text']::placeholder,
+.form-group input[type='email']::placeholder,
+.form-group input[type='Text']::placeholder {
+  color: #a0a0a0; /* Lighter placeholder text */
+}
+
+.form-group input[type='text']:focus,
+.form-group input[type='email']:focus,
+.form-group input[type='Text']:focus {
+  outline: none;
+  border-color: #8bb8e4; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); /* Soft blue shadow on focus */
+}
+
+/* Custom Checkbox Styling */
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.hidden-checkbox {
+  /* Hide the default checkbox */
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+}
+
+.checkbox-label::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ccc;
+  border-radius: 4px; /* Slightly rounded checkbox */
+  margin-right: 10px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  flex-shrink: 0; /* Prevent the square from shrinking */
+}
+
+.hidden-checkbox:checked + .checkbox-label::before {
+  background-color: #333; /* Dark background when checked */
+  border-color: #333; /* Dark border when checked */
+}
+
+.hidden-checkbox:checked + .checkbox-label::after {
+  content: '';
+  position: absolute;
+  left: 6px; /* Adjust for positioning the checkmark */
+  top: 6px; /* Adjust for positioning the checkmark */
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background-color: white; /* White checkmark */
+}
+
+/* You can remove or keep the old .text-heading and .text-box-container if they are used elsewhere.
+   For this specific request, they are superseded by new classes for the responsive layout. */
