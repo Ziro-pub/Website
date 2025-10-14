@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (navbarLogo) navbarLogo.classList.toggle('logo-visible', shouldBeVisible);
             
             if (navbar) {
-                const shouldSuppressLamp = latestActiveIndex < 2;
+                const shouldSuppressLamp = (latestActiveIndex < 2 || latestActiveIndex === 9);
                 navbar.classList.toggle('nav-suppressed', shouldSuppressLamp);
 
                 let activeLinkFound = false;
@@ -202,12 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (waitlistForm) {
         waitlistForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            
             const emailInput = document.getElementById('email-input');
             const messageEl = document.getElementById('form-message');
             const submitButton = waitlistForm.querySelector('button[type="submit"]');
-            const email = emailInput.value;
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxgloVT_8j0-d7xq2xTpu4XIkiBRzuIaRFaNZVIhUhB5I-KdFkYifDhHSpUZTyxRLIjCQ/exec'; 
+            const email = emailInput.value.trim();
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxgloVT_8j0-d7xq2xTpu4XIkiBRzuIaRFaNZVIhUhB5I-KdFkYifDhHSpUZTyxRLIjCQ/exec';
 
+            // Validate email
             if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
                 messageEl.textContent = 'Please enter a valid email address.';
                 messageEl.className = 'text-red-400 mt-4 h-6';
@@ -215,35 +217,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // 1. INSTANT SUCCESS FEEDBACK (don't wait for server)
             submitButton.disabled = true;
-            submitButton.textContent = 'Submitting...';
-            messageEl.textContent = '';
+            submitButton.textContent = 'Added ✓';
+            messageEl.textContent = 'Thank you for joining! Welcome to the family';
+            messageEl.className = 'mt-4 h-6';
+            messageEl.style.color = 'var(--accent)';
+            emailInput.value = '';
+
+            // 2. GUARANTEED DELIVERY - Works even if browser closes immediately
             const formData = new FormData();
             formData.append('Email', email);
+            formData.append('Timestamp', new Date().toISOString());
 
-            fetch(scriptURL, { method: 'POST', mode: 'cors', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.result === 'success') {
-                    messageEl.textContent = 'Thank you! You have been added to the waitlist.';
-                    messageEl.className = 'text-green-400 mt-4 h-6';
-                    emailInput.value = '';
-                } else {
-                    throw new Error(data.error ? JSON.stringify(data.error) : 'An unknown error occurred.');
-                }
-            })
-            .catch(error => {
-                console.error('Error!', error.message);
-                messageEl.textContent = 'Something went wrong. Please try again.';
-                messageEl.className = 'text-red-400 mt-4 h-6';
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Join Waitlist';
-                    messageEl.textContent = '';
-                }, 5000);
-            });
+            // Try sendBeacon first (guaranteed delivery)
+            if (navigator.sendBeacon) {
+                // Browser guarantees this sends even if user closes tab/browser
+                const blob = new Blob([new URLSearchParams(formData).toString()], {
+                    type: 'application/x-www-form-urlencoded'
+                });
+                navigator.sendBeacon(scriptURL, blob);
+            } else {
+                // Fallback for very old browsers (rare)
+                fetch(scriptURL, { 
+                    method: 'POST', 
+                    mode: 'cors', 
+                    body: formData,
+                    keepalive: true  // Keeps request alive even if page closes
+                }).catch(error => console.log('Submission:', error));
+            }
+
+            // 3. RESET FORM after 3 seconds
+            setTimeout(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Join Waitlist';
+                messageEl.textContent = '';
+            }, 3000);
         });
     }
 

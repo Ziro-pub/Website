@@ -8,7 +8,7 @@
     --accent: #b09cff;
     --accent-secondary: #ff8fc7;
     --accent-hover: #c9bfff;
-    --accent-glow: rgba(176, 156, 255, 0.2);
+    --accent-glow: rgba(176, 156, 255, 0.551);
     --card-bg: rgba(176, 156, 255, 0.08);
     --border-color: rgba(176, 156, 255, 0.2);
     --header-height: 72px;
@@ -218,6 +218,7 @@ body {
     z-index: 2;
 }
 
+
 .navbar-link:hover {
     color: var(--accent);
 }
@@ -415,8 +416,10 @@ body {
 
 /* --- Waitlist Form Styles --- */
 #waitlist-form input[type="email"] {
-    background-color: var(--card-bg);
+    background-color: rgba(176, 156, 255, 0.15);
     border: 1px solid var(--border-color);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     color: var(--text-primary);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
