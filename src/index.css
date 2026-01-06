@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-text-primary antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  ::selection {
+    @apply bg-silver-300 text-background;
+  }
+
+  /* Smooth scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(192, 192, 192, 0.2);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(192, 192, 192, 0.4);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-silver text-background font-medium px-8 py-4 transition-all duration-300;
+    letter-spacing: 0.1em;
+  }
+
+  .btn-primary:hover {
+    @apply bg-silver-light;
+    box-shadow: 0 0 30px rgba(192, 192, 192, 0.3);
+  }
+
+  /* Premium card with subtle border */
+  .card {
+    @apply bg-card rounded-none p-8 md:p-10 border border-border transition-all duration-500;
+  }
+
+  .card:hover {
+    @apply border-silver-600 bg-card-hover;
+  }
+
+  .card-flat {
+    @apply bg-card/50 p-8 border border-border/30;
+  }
+
+  .feature-number {
+    @apply w-12 h-12 flex items-center justify-center text-silver-200 font-serif text-xl shrink-0;
+    border: 1px solid rgba(192, 192, 192, 0.3);
+  }
+
+  /* Silver foil gradient text */
+  .text-silver-gradient {
+    background: linear-gradient(
+      90deg,
+      #909090 0%,
+      #c0c0c0 15%,
+      #e8e8e8 30%,
+      #ffffff 50%,
+      #e8e8e8 70%,
+      #c0c0c0 85%,
+      #909090 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s linear infinite;
+  }
+
+  /* Subtle shimmer effect */
+  .text-shimmer {
+    background: linear-gradient(
+      90deg,
+      #a0a0a0 0%,
+      #d0d0d0 25%,
+      #f5f5f5 50%,
+      #d0d0d0 75%,
+      #a0a0a0 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Spotlight effect container */
+  .spotlight-container {
+    position: relative;
+  }
+
+  .spotlight-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+      rgba(192, 192, 192, 0.04),
+      transparent 40%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Cinematic reveal animation */
+  .cinematic-reveal {
+    animation: cinematicReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes cinematicReveal {
+    0% {
+      opacity: 0;
+      transform: translateY(80px);
+      filter: blur(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  /* Staggered delays */
+  .cinematic-reveal-1 { animation-delay: 0.1s; }
+  .cinematic-reveal-2 { animation-delay: 0.25s; }
+  .cinematic-reveal-3 { animation-delay: 0.4s; }
+  .cinematic-reveal-4 { animation-delay: 0.55s; }
+  .cinematic-reveal-5 { animation-delay: 0.7s; }
+
+  /* Elegant divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(192, 192, 192, 0.4) 50%,
+      transparent
+    );
+  }
+
+  /* Glow effect on hover */
+  .glow-hover {
+    transition: all 0.5s ease;
+  }
+
+  .glow-hover:hover {
+    text-shadow: 0 0 40px rgba(192, 192, 192, 0.5);
+  }
+
+  /* Premium link style */
+  .link-premium {
+    @apply text-silver-300 transition-all duration-300;
+    position: relative;
+  }
+
+  .link-premium::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    transition: width 0.4s ease;
+  }
+
+  .link-premium:hover {
+    @apply text-silver-100;
+  }
+
+  .link-premium:hover::after {
+    width: 100%;
+  }
+
+  /* Typography classes - following UI best practices */
+  /* Headings: Serif for elegance, tight tracking */
+  .heading-display {
+    @apply font-serif text-5xl md:text-7xl lg:text-8xl font-normal tracking-tight leading-[0.95];
+  }
+
+  .heading-large {
+    @apply font-serif text-4xl md:text-5xl lg:text-6xl font-normal tracking-tight leading-[1.1];
+  }
+
+  .heading-medium {
+    @apply font-serif text-3xl md:text-4xl font-normal tracking-tight leading-[1.2];
+  }
+
+  .heading-small {
+    @apply font-serif text-2xl md:text-3xl font-normal leading-[1.3];
+  }
+
+  /* Body text: Optimized for readability */
+  /* Min 18px on mobile, 20-21px on desktop for optimal legibility */
+  .body-large {
+    @apply text-lg md:text-xl font-normal leading-[1.7] tracking-normal;
+    color: #d0d0d0;
+  }
+
+  .body-default {
+    @apply text-base md:text-lg font-normal leading-[1.7] tracking-normal;
+    color: #c0c0c0;
+  }
+
+  .body-small {
+    @apply text-sm md:text-base font-normal leading-[1.6] tracking-normal;
+    color: #b0b0b0;
+  }
+
+  /* Labels: Small caps style */
+  .label {
+    @apply text-xs md:text-sm font-medium tracking-[0.15em] uppercase;
+    color: #a0a0a0;
+  }
+
+  /* Descriptions in lists/cards */
+  .description {
+    @apply text-base md:text-lg font-normal leading-[1.65];
+    color: #c0c0c0;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Aspect ratios */
+  .aspect-cinema {
+    aspect-ratio: 21/9;
+  }
+
+  /* Border gradient */
+  .border-gradient {
+    border-image: linear-gradient(
+      135deg,
+      rgba(192, 192, 192, 0.3),
+      rgba(192, 192, 192, 0.1)
+    ) 1;
+  }
+}
+
+/* Keyframes for shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
