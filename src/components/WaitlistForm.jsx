@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, X, Check } from 'lucide-react'
 import { GOOGLE_SCRIPT_URL } from '../config/api'
@@ -16,6 +17,22 @@ export default function WaitlistForm() {
   const [message, setMessage] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [selections, setSelections] = useState([])
+
+  // Lock body scroll and disable navbar when modal is open
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden'
+      // Add class to disable navbar interactions
+      document.body.classList.add('modal-open')
+    } else {
+      document.body.style.overflow = ''
+      document.body.classList.remove('modal-open')
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.body.classList.remove('modal-open')
+    }
+  }, [showModal])
 
   const handleJoinClick = (e) => {
     e.preventDefault()
@@ -136,75 +153,78 @@ export default function WaitlistForm() {
         )}
       </motion.div>
 
-      {/* Subscription Selection Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-4"
-            onClick={() => setShowModal(false)}
-          >
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/90" />
-
-            {/* Modal */}
+      {/* Subscription Selection Modal - rendered via portal to body */}
+      {createPortal(
+        <AnimatePresence>
+          {showModal && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className="relative bg-background border border-silver-600 p-8 max-w-md w-full shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[10000] flex items-center justify-center px-4"
+              onClick={() => setShowModal(false)}
             >
-              {/* Close button */}
-              <button
-                onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 text-silver-500 hover:text-silver-200 transition-colors"
+              {/* Backdrop */}
+              <div className="absolute inset-0 bg-background/80" />
+
+              {/* Modal */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ duration: 0.2 }}
+                className="relative bg-background border border-silver-600 p-8 max-w-md w-full shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
               >
-                <X size={20} />
-              </button>
+                {/* Close button */}
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="absolute top-4 right-4 text-silver-500 hover:text-silver-200 transition-colors"
+                >
+                  <X size={20} />
+                </button>
 
-              <h3 className="text-silver-100 text-xl font-serif mb-2">
-                What interests you?
-              </h3>
-              <p className="text-silver-400 text-sm mb-6">
-                Select the topics you'd like to hear about.
-              </p>
+                <h3 className="text-silver-100 text-xl font-serif mb-2">
+                  What interests you?
+                </h3>
+                <p className="text-silver-400 text-sm mb-6">
+                  Select the topics you'd like to hear about.
+                </p>
 
-              <div className="space-y-3 mb-8">
-                {SUBSCRIPTION_OPTIONS.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => toggleSelection(option.id)}
-                    className={`w-full flex items-center justify-between px-4 py-3 border transition-all duration-200 ${
-                      selections.includes(option.id)
-                        ? 'border-white bg-white text-background'
-                        : 'border-silver-600 text-silver-400 hover:border-silver-400 hover:text-silver-200'
-                    }`}
-                  >
-                    <span className="text-sm tracking-wide font-medium">{option.label}</span>
-                    {selections.includes(option.id) && (
-                      <Check size={16} className="text-background" />
-                    )}
-                  </button>
-                ))}
-              </div>
+                <div className="space-y-3 mb-8">
+                  {SUBSCRIPTION_OPTIONS.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => toggleSelection(option.id)}
+                      className={`w-full flex items-center justify-between px-4 py-3 border transition-all duration-200 ${
+                        selections.includes(option.id)
+                          ? 'border-white bg-white text-background'
+                          : 'border-silver-600 text-silver-400 hover:border-silver-400 hover:text-silver-200'
+                      }`}
+                    >
+                      <span className="text-sm tracking-wide font-medium">{option.label}</span>
+                      {selections.includes(option.id) && (
+                        <Check size={16} className="text-background" />
+                      )}
+                    </button>
+                  ))}
+                </div>
 
-              <button
-                onClick={handleSubmit}
-                disabled={selections.length === 0}
-                className="w-full px-8 py-4 bg-silver-100 text-background text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                Subscribe
-                <ArrowRight size={14} />
-              </button>
+                <button
+                  onClick={handleSubmit}
+                  disabled={selections.length === 0}
+                  className="w-full px-8 py-4 bg-silver-100 text-background text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  Subscribe
+                  <ArrowRight size={14} />
+                </button>
+              </motion.div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   )
 }
