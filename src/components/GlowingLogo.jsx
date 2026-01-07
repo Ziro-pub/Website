@@ -17,6 +17,8 @@ export default function GlowingLogo({
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
   const [isMobile, setIsMobile] = useState(false)
   const animationRef = useRef(null)
+  const animationStartRef = useRef(null) // Persist animation start time across re-renders
+  const dimensionsRef = useRef({ width: 0, height: 0 }) // Ref for animation to read without restarting
 
   // Load logo image
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function GlowingLogo({
         const rect = containerRef.current.getBoundingClientRect()
         if (rect.width > 0 && rect.height > 0) {
           setDimensions({ width: rect.width, height: rect.height })
+          dimensionsRef.current = { width: rect.width, height: rect.height }
         }
       }
       setIsMobile(window.innerWidth < mobileBreakpoint)
@@ -91,23 +94,32 @@ export default function GlowingLogo({
 
   // Circular animation for mobile
   useEffect(() => {
-    if (!isMobile || dimensions.width === 0 || dimensions.height === 0) {
+    if (!isMobile) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current)
         animationRef.current = null
       }
+      // Reset animation start time when switching away from mobile
+      animationStartRef.current = null
       return
     }
 
-    const centerX = dimensions.width / 2
-    const centerY = dimensions.height / 2
-    const radius = Math.min(dimensions.width, dimensions.height) * mobileAnimationRadius
-    let startTime = null
-
     const animate = (timestamp) => {
-      if (!startTime) startTime = timestamp
-      const elapsed = timestamp - startTime
+      // Use persistent start time to prevent animation reset on dimension changes
+      if (!animationStartRef.current) animationStartRef.current = timestamp
+      const elapsed = timestamp - animationStartRef.current
       const angle = elapsed * mobileAnimationSpeed
+
+      // Read dimensions from ref to get latest values without restarting animation
+      const { width, height } = dimensionsRef.current
+      if (width === 0 || height === 0) {
+        animationRef.current = requestAnimationFrame(animate)
+        return
+      }
+
+      const centerX = width / 2
+      const centerY = height / 2
+      const radius = Math.min(width, height) * mobileAnimationRadius
 
       // Calculate position on the circle
       const x = centerX + Math.cos(angle) * radius
@@ -125,7 +137,7 @@ export default function GlowingLogo({
         animationRef.current = null
       }
     }
-  }, [isMobile, dimensions, mobileAnimationSpeed, mobileAnimationRadius])
+  }, [isMobile, mobileAnimationSpeed, mobileAnimationRadius])
 
   // Draw the glow effect on canvas
   useEffect(() => {
