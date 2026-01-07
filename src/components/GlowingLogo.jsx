@@ -20,23 +20,36 @@ export default function GlowingLogo({
       logoImageRef.current = img
       setLogoLoaded(true)
     }
+    img.onerror = () => {
+      // Retry loading once on error
+      setTimeout(() => {
+        img.src = '/ziro_outline_white.svg'
+      }, 100)
+    }
     img.src = '/ziro_outline_white.svg'
   }, [])
 
-  // Track container dimensions
+  // Track container dimensions - wait for logo to load first
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect()
-        setDimensions({ width: rect.width, height: rect.height })
+        if (rect.width > 0 && rect.height > 0) {
+          setDimensions({ width: rect.width, height: rect.height })
+        }
       }
     }
+
+    // Initial update with a small delay to ensure layout is complete
+    const timeoutId = setTimeout(updateDimensions, 50)
     updateDimensions()
+
     window.addEventListener('resize', updateDimensions)
     return () => {
+      clearTimeout(timeoutId)
       window.removeEventListener('resize', updateDimensions)
     }
-  }, [])
+  }, [logoLoaded])
 
   // Track mouse position globally and update on scroll
   useEffect(() => {
@@ -72,7 +85,7 @@ export default function GlowingLogo({
   useEffect(() => {
     const canvas = canvasRef.current
     const logo = logoImageRef.current
-    if (!canvas || !logo || dimensions.width === 0) return
+    if (!canvas || !logo || !logoLoaded || dimensions.width === 0 || dimensions.height === 0) return
 
     const ctx = canvas.getContext('2d')
     const dpr = window.devicePixelRatio || 1
@@ -113,6 +126,15 @@ export default function GlowingLogo({
       <img
         src="/ziro_outline_white.svg"
         alt=""
+        onLoad={() => {
+          // Trigger dimension recalculation when visible image loads
+          if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect()
+            if (rect.width > 0 && rect.height > 0) {
+              setDimensions({ width: rect.width, height: rect.height })
+            }
+          }
+        }}
         style={{
           width: '100%',
           height: 'auto',
