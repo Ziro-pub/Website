@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { GOOGLE_SCRIPT_URL } from '../config/api'
 
 export default function WaitlistForm() {
   const [email, setEmail] = useState('')
@@ -18,12 +19,12 @@ export default function WaitlistForm() {
 
     setStatus('loading')
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxgloVT_8j0-d7xq2xTpu4XIkiBRzuIaRFaNZVIhUhB5I-KdFkYifDhHSpUZTyxRLIjCQ/exec'
     const formData = new FormData()
+    formData.append('formType', 'waitlist')
     formData.append('Email', email)
 
     try {
-      const response = await fetch(scriptURL, {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'cors',
         body: formData
