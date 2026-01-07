@@ -75,7 +75,7 @@ export default function WaitlistForm() {
     setShowModal(false)
 
     const subscriptions = selections.includes('all')
-      ? 'All'
+      ? 'Education, Consulting, Finance'
       : selections.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ')
 
     const formData = new FormData()
