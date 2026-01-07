@@ -3,7 +3,10 @@ import { useState, useRef, useEffect } from 'react'
 export default function GlowingLogo({
   className = '',
   baseOpacity = 0.03,
-  glowSize = 600
+  glowSize = 600,
+  mobileBreakpoint = 768,
+  mobileAnimationSpeed = 0.0008, // Radians per millisecond
+  mobileAnimationRadius = 0.4 // Percentage of container size
 }) {
   const containerRef = useRef(null)
   const canvasRef = useRef(null)
@@ -12,6 +15,8 @@ export default function GlowingLogo({
   const [logoLoaded, setLogoLoaded] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const [isMobile, setIsMobile] = useState(false)
+  const animationRef = useRef(null)
 
   // Load logo image
   useEffect(() => {
@@ -29,7 +34,7 @@ export default function GlowingLogo({
     img.src = '/ziro_outline_white.svg'
   }, [])
 
-  // Track container dimensions - wait for logo to load first
+  // Track container dimensions and detect mobile
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -38,6 +43,7 @@ export default function GlowingLogo({
           setDimensions({ width: rect.width, height: rect.height })
         }
       }
+      setIsMobile(window.innerWidth < mobileBreakpoint)
     }
 
     // Initial update with a small delay to ensure layout is complete
@@ -49,10 +55,12 @@ export default function GlowingLogo({
       clearTimeout(timeoutId)
       window.removeEventListener('resize', updateDimensions)
     }
-  }, [logoLoaded])
+  }, [logoLoaded, mobileBreakpoint])
 
-  // Track mouse position globally and update on scroll
+  // Track mouse position globally and update on scroll (desktop only)
   useEffect(() => {
+    if (isMobile) return
+
     const calculateRelativePos = () => {
       if (!containerRef.current) return
       const rect = containerRef.current.getBoundingClientRect()
@@ -79,7 +87,45 @@ export default function GlowingLogo({
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [isMobile])
+
+  // Circular animation for mobile
+  useEffect(() => {
+    if (!isMobile || dimensions.width === 0 || dimensions.height === 0) {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+        animationRef.current = null
+      }
+      return
+    }
+
+    const centerX = dimensions.width / 2
+    const centerY = dimensions.height / 2
+    const radius = Math.min(dimensions.width, dimensions.height) * mobileAnimationRadius
+    let startTime = null
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp
+      const elapsed = timestamp - startTime
+      const angle = elapsed * mobileAnimationSpeed
+
+      // Calculate position on the circle
+      const x = centerX + Math.cos(angle) * radius
+      const y = centerY + Math.sin(angle) * radius
+
+      setMousePos({ x, y })
+      animationRef.current = requestAnimationFrame(animate)
+    }
+
+    animationRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current)
+        animationRef.current = null
+      }
+    }
+  }, [isMobile, dimensions, mobileAnimationSpeed, mobileAnimationRadius])
 
   // Draw the glow effect on canvas
   useEffect(() => {
