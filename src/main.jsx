@@ -15,7 +15,16 @@ const app = (
 
 // Use hydrate for prerendered content, otherwise use render
 if (container.hasChildNodes()) {
-  hydrateRoot(container, app)
+  hydrateRoot(container, app, {
+    onRecoverableError: (error) => {
+      // Suppress hydration mismatch errors from framer-motion animations
+      // These are expected since prerendered HTML captures mid-animation state
+      if (error.message?.includes('Hydration') || error.message?.includes('hydrat')) {
+        return
+      }
+      console.error(error)
+    },
+  })
 } else {
   createRoot(container).render(app)
 }
