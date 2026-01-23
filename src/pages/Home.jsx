@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Linkedin } from 'lucide-react'
 import WaitlistForm from '../components/WaitlistForm'
 import GlowingLogo from '../components/GlowingLogo'
 
@@ -53,13 +53,15 @@ const teamSlides = [
       name: 'Eaman Okumori Javid',
       title: 'Chief Executive Officer',
       education: "MEng General Engineering, King's College London",
-      experience: ['MUFG FS, Treasury and Payments Division']
+      experience: ['MUFG FS, Treasury and Payments Division'],
+      linkedin: 'https://www.linkedin.com/in/eaman-okumori-javid'
     },
     {
       name: 'Zinelyes Amlik',
       title: 'Chief Technology Officer',
       education: 'MSc Computational Science and Engineering, Imperial College London',
-      experience: ['AIP, AI Solutions']
+      experience: ['AIP, AI Solutions'],
+      linkedin: 'https://www.linkedin.com/in/zine-amlik'
     }
   ],
   [
@@ -67,13 +69,15 @@ const teamSlides = [
       name: 'Mohammed Aziz Ketata',
       title: 'Lead Developer',
       education: 'MSc Computational Science and Engineering, Imperial College London',
-      experience: ['AIP, AI Solutions']
+      experience: ['AIP, AI Solutions'],
+      linkedin: 'https://www.linkedin.com/in/mohamedazizketata'
     },
     {
       name: 'Randall Liew',
       title: 'Head of Research',
       education: 'MSc Applied Biosciences & Biotechnology, Imperial College London',
-      experience: ['Biochemical Society UK, Protein Crystallization & Oncology']
+      experience: ['Biochemical Society UK, Protein Crystallization & Oncology'],
+      linkedin: 'https://www.linkedin.com/in/randall-liew'
     }
   ],
   [
@@ -81,13 +85,15 @@ const teamSlides = [
       name: 'Angela Wang',
       title: 'Head of Technical Operations',
       education: "BSc Mathematics and Statistics, King's College London",
-      experience: ['Wuchan Zhongda Capital Management, Quant Division', 'Zhejin Trust, Investment Division']
+      experience: ['Wuchan Zhongda Capital Management, Quant Division', 'Zhejin Trust, Investment Division'],
+      linkedin: 'https://www.linkedin.com/in/angelwang-'
     },
     {
       name: 'Shon Golod',
-      title: 'Head of Strategy',
+      title: 'Head of Education',
       education: "MSc MedTech Innovation & Entrepreneurship, King's College London",
-      experience: ['Anakatech, Legal Risk and Compliance']
+      experience: ['Anakatech, Legal Risk and Compliance'],
+      linkedin: 'https://www.linkedin.com/in/shon-golod'
     }
   ]
 ]
@@ -352,6 +358,15 @@ export default function Home() {
                         <p key={i} className="text-silver-600 text-sm">{exp}</p>
                       ))}
                     </div>
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 mt-4 text-silver-500 hover:text-silver-300 transition-colors duration-300"
+                    >
+                      <Linkedin size={16} />
+                      <span className="text-sm">LinkedIn</span>
+                    </a>
                   </div>
                 ))}
               </motion.div>
