@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import GlowingLogo from '../components/GlowingLogo'
+import { GOOGLE_SCRIPT_URL } from '../config/api'
 
 const contactMethods = [
   {
@@ -31,12 +32,48 @@ export default function Contact() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Client-side validation
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setStatus('error')
+      return
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      setStatus('error')
+      return
+    }
+
     setStatus('sending')
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    setStatus('sent')
-    setFormData({ name: '', email: '', company: '', message: '' })
+    const submitData = new FormData()
+    submitData.append('formType', 'contact')
+    submitData.append('name', formData.name.trim())
+    submitData.append('email', formData.email.trim())
+    submitData.append('company', formData.company.trim())
+    submitData.append('message', formData.message.trim())
+
+    try {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        body: submitData
+      })
+
+      const data = await response.json()
+
+      if (data.result === 'success') {
+        setStatus('sent')
+        setFormData({ name: '', email: '', company: '', message: '' })
+        setTimeout(() => setStatus('idle'), 5000)
+      } else {
+        throw new Error(data.error || 'Submission failed')
+      }
+    } catch (error) {
+      console.error('Contact form error:', error)
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 5000)
+    }
   }
 
   const handleChange = (e) => {
@@ -232,6 +269,16 @@ export default function Contact() {
                     className="text-silver-300 text-sm"
                   >
                     Thank you for reaching out. We'll be in touch soon.
+                  </motion.p>
+                )}
+
+                {status === 'error' && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-400 text-sm"
+                  >
+                    Something went wrong. Please check your details and try again.
                   </motion.p>
                 )}
               </form>

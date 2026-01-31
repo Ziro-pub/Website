@@ -45,7 +45,7 @@ export default function Footer() {
           </Link>
 
           {/* Navigation */}
-          <div className="flex items-center gap-10">
+          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
             {navLinks.map((link) => (
               <Link
                 key={link.path}

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Layout from './components/Layout'
@@ -10,6 +11,11 @@ import Contact from './pages/Contact'
 
 function App() {
   const location = useLocation()
+
+  // Dispatch event for prerenderer to know when page is ready
+  useEffect(() => {
+    document.dispatchEvent(new Event('render-event'))
+  }, [location.pathname])
 
   return (
     <>

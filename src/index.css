@@ -282,3 +282,9 @@
     background-position: 200% center;
   }
 }
+
+/* Modal open state - disable navbar interactions */
+body.modal-open nav,
+body.modal-open header {
+  pointer-events: none;
+}
